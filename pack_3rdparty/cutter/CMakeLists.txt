@@ -25,8 +25,6 @@ install(
 
 include( CPackConfig )
 
-set( CPACK_STRIP_FILES "bin/Cutter" )
-
 set( CPACK_PACKAGE_NAME "radare2-cutter-appimage" )
 set( CPACK_PACKAGE_DESCRIPTION "Cutter is a Qt based GUI for reverse engineering binaries, which makes use of the radare2 framework. Advanced users are expected to use the radare2 CLI tools instead, which are much more powerful." )
 

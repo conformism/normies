@@ -13,6 +13,13 @@ set( CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}"
 	"${CMAKE_SOURCE_DIR}"
 	)
 
+find_program( STRIP strip )
+if( STRIP )
+	message( STATUS "Found strip: ${STRIP}" )
+else()
+	message( ERROR "Not found strip: Please install binutils" )
+endif()
+
 include( ExternalProject )
 
 set( EP_BASE_DIR "external" )

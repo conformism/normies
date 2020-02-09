@@ -12,6 +12,18 @@ ExternalProject_Add( ${PROJECT_NAME}
 	URL_MD5 "cb9d01248c3f978998e595d66927faf0"
 	CONFIGURE_COMMAND ${CMAKE_COMMAND} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX= <SOURCE_DIR>
 	INSTALL_COMMAND make install DESTDIR=<INSTALL_DIR>
+#	COMMAND ${STRIP} -s "<INSTALL_DIR>/bin/hotspot"
+#	COMMAND ${STRIP} -s "<INSTALL_DIR>/lib/x86_64-linux-gnu/libexec/hotspot-perfparser"
+	)
+
+ExternalProject_Add_Step( ${PROJECT_NAME} strip
+	COMMAND ${STRIP} -s "<INSTALL_DIR>/bin/hotspot"
+	COMMAND ${CMAKE_COMMAND} -E echo_append "-- Stripping: "
+	COMMAND ${CMAKE_COMMAND} -E echo "<INSTALL_DIR>/bin/hotspot"
+	COMMAND ${STRIP} -s "<INSTALL_DIR>/lib/x86_64-linux-gnu/libexec/hotspot-perfparser"
+	COMMAND ${CMAKE_COMMAND} -E echo_append "-- Stripping: "
+	COMMAND ${CMAKE_COMMAND} -E echo "<INSTALL_DIR>/lib/x86_64-linux-gnu/libexec/hotspot-perfparser"
+	DEPENDEES install
 	)
 
 install(
@@ -24,11 +36,6 @@ install(
 ############################################################################PACK
 
 include( CPackConfig )
-
-set( CPACK_STRIP_FILES
-	"usr/bin/hotspot"
-	"usr/lib/x86_64-linux-gnu/libexec/hotspot-perfparser"
-	)
 
 set( CPACK_PACKAGE_NAME "hotspot" )
 set( CPACK_PACKAGE_DESCRIPTION "This project is a KDAB R&D effort to create a standalone GUI for performance data. As the first goal, we want to provide a UI like KCachegrind around Linux perf. Looking ahead, we intend to support various other performance data formats under this umbrella." )
