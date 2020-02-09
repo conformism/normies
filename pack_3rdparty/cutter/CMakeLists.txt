@@ -7,11 +7,7 @@ project( Cutter
 
 ########################################################################DOWNLOAD
 
-include( ExternalProject )
-
-set_directory_properties( PROPERTIES EP_BASE "pack-3rdparty" )
-
-ExternalProject_Add( cutter
+ExternalProject_Add( ${PROJECT_NAME}
 	URL "https://github.com/radareorg/cutter/releases/download/v1.10.1/Cutter-v1.10.1-x64.Linux.AppImage"
 	URL_MD5 "d79f17732e0bf77921ac2143ec556527"
 	DOWNLOAD_NO_EXTRACT TRUE
@@ -21,7 +17,7 @@ ExternalProject_Add( cutter
 	)
 
 install(
-	PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/pack-3rdparty/Install/cutter/bin/Cutter"
+	PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/${EP_BASE_DIR}/Install/${PROJECT_NAME}/bin/Cutter"
 	DESTINATION "bin"
 	)
 
@@ -29,18 +25,18 @@ install(
 
 include( CPackConfig )
 
-set( CPACK_STRIP_FILES ${CPACK_STRIP_FILES} "bin/Cutter" )
+set( CPACK_STRIP_FILES "bin/Cutter" )
 
 set( CPACK_PACKAGE_NAME "radare2-cutter-appimage" )
-set( CPACK_PACKAGE_DESCRIPTION " Cutter is a Qt based GUI for reverse engineering binaries, which makes use of the radare2 framework. Advanced users are expected to use the radare2 CLI tools instead, which are much more powerful." )
+set( CPACK_PACKAGE_DESCRIPTION "Cutter is a Qt based GUI for reverse engineering binaries, which makes use of the radare2 framework. Advanced users are expected to use the radare2 CLI tools instead, which are much more powerful." )
 
 set( CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/radareorg/cutter" )
-set( CPACK_DEBIAN_PACKAGE_SECTION  "devel" )
+set( CPACK_DEBIAN_PACKAGE_SECTION "devel" )
 set( CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON )
 
 set( CPACK_RPM_PACKAGE_LICENSE "GPL-3.0" )
-set( CPACK_RPM_PACKAGE_URL     "https://github.com/radareorg/cutter" )
+set( CPACK_RPM_PACKAGE_URL "https://github.com/radareorg/cutter" )
 
 include( CPack )
-CPackRegister( cutter )
+CPackRegister( ${PROJECT_NAME} )
 
