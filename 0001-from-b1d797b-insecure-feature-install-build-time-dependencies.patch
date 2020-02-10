@@ -1,0 +1,189 @@
+From 4a80ddffbadfa41d9d4a040671f67c3724814d44 Mon Sep 17 00:00:00 2001
+From: "tlepoix@localhost" <thomas.lepoix@protonmail.ch>
+Date: Mon, 10 Feb 2020 21:17:19 +0100
+Subject: [PATCH] insecure feature : install build-time dependencies
+
+---
+ CMakeLists.txt                            |  4 +-
+ CPackConfig.cmake                         |  4 +-
+ cmake/Dependencies.cmake                  | 45 +++++++++++++++++++++++
+ pack/normies-dev/CMakeLists.txt           |  6 ++-
+ pack/normies-dev/dependencies.debian      |  1 +
+ pack_3rdparty/hotspot/CMakeLists.txt      |  6 +++
+ pack_3rdparty/hotspot/dependencies.debian | 15 ++++++++
+ 7 files changed, 77 insertions(+), 4 deletions(-)
+ create mode 100644 cmake/Dependencies.cmake
+ create mode 100644 pack/normies-dev/dependencies.debian
+ create mode 100644 pack_3rdparty/hotspot/dependencies.debian
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 2195f5e..4b1bbd8 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -10,6 +10,7 @@ set( NORMIES_URL "https://github.com/conformism/normies" )
+ set( NORMIES_MAINTAINER "Thomas Lepoix <thomas.lepoix@protonmail.ch>" )
+ 
+ set( CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}"
++	"${CMAKE_SOURCE_DIR}/cmake"
+ 	"${CMAKE_SOURCE_DIR}"
+ 	)
+ 
+@@ -21,6 +22,7 @@ else()
+ endif()
+ 
+ include( ExternalProject )
++include( Dependencies )
+ 
+ set( EP_BASE_DIR "external" )
+ set_directory_properties( PROPERTIES EP_BASE "${EP_BASE_DIR}" )
+@@ -36,7 +38,7 @@ set( CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS
+ 
+ add_custom_target( pack )
+ 
+-add_subdirectory( "${CMAKE_SOURCE_DIR}/pack_3rdparty/cutter" )
++#add_subdirectory( "${CMAKE_SOURCE_DIR}/pack_3rdparty/cutter" )
+ add_subdirectory( "${CMAKE_SOURCE_DIR}/pack_3rdparty/hotspot" )
+ add_subdirectory( "${CMAKE_SOURCE_DIR}/pack/normies-dev" )
+ 
+diff --git a/CPackConfig.cmake b/CPackConfig.cmake
+index 4c248ad..11b92cc 100644
+--- a/CPackConfig.cmake
++++ b/CPackConfig.cmake
+@@ -50,11 +50,11 @@ set( CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON )
+ set( CPACK_RPM_FILE_NAME RPM-DEFAULT )
+ 
+ macro( CPackRegister )
+-	add_custom_target( "package-${PROJECT_NAME}"
++	add_custom_target( "Package-${PROJECT_NAME}"
+ 		COMMAND ${CMAKE_CPACK_COMMAND} --config "${CMAKE_CURRENT_BINARY_DIR}/CPackConfig.cmake"
+ 		DEPENDS ${ARGV}
+ 		)
+ 
+-	add_dependencies( pack "package-${PROJECT_NAME}" )
++	add_dependencies( pack "Package-${PROJECT_NAME}" )
+ endmacro()
+ 
+diff --git a/cmake/Dependencies.cmake b/cmake/Dependencies.cmake
+new file mode 100644
+index 0000000..880e559
+--- /dev/null
++++ b/cmake/Dependencies.cmake
+@@ -0,0 +1,45 @@
++
++if( INSTALL_BUILD_TIME_DEP MATCHES TRUE )
++
++	message( STATUS "Build-time packages dependencies will be installed" )
++
++	find_program( APT apt )
++	if( APT )
++		message( STATUS "Found apt: ${APT}" )
++	else()
++		message( ERROR "Not found apt: Debian build-time packages dependencies won't be installed" )
++	endif()
++
++	macro( InstallDebianDependencies )
++		add_custom_target( "Dependencies-${PROJECT_NAME}"
++			COMMAND grep '^[^\#]' "${CMAKE_CURRENT_SOURCE_DIR}/dependencies.debian" | xargs -r -- sudo apt install -y
++			COMMENT "Install build-time dependencies for ${PROJECT_NAME} target"
++			DEPENDS ${ARGV}
++			)
++	endmacro()
++
++	macro( AddDebianRepository )
++		add_custom_target( "AddDebianRepository-${PROJECT_NAME}"
++			COMMAND sudo add-apt-repository -y "${ARGV}"
++			COMMAND sudo apt update
++			COMMENT "Add an APT repository for ${PROJECT_NAME} target"
++			)
++	endmacro()
++
++else()
++
++	message( STATUS "Build-time packages dependencies won't be installed" )
++
++	macro( InstallDebianDependencies )
++		add_custom_target( "Dependencies-${PROJECT_NAME}" 
++#			COMMENT "Nothing to do"
++			DEPENDS ${ARGV}
++			)
++	endmacro()
++	macro( AddDebianRepository )
++		add_custom_target( "AddDebianRepository-${PROJECT_NAME}" 
++#			COMMENT "Nothing to do"
++			)
++	endmacro()
++
++endif()
+diff --git a/pack/normies-dev/CMakeLists.txt b/pack/normies-dev/CMakeLists.txt
+index ca762be..e6e6b70 100644
+--- a/pack/normies-dev/CMakeLists.txt
++++ b/pack/normies-dev/CMakeLists.txt
+@@ -5,6 +5,10 @@ project( Normies-dev
+ 	DESCRIPTION "Normies developer starter-pack"
+ 	)
+ 
++####################################################################DEPENDENCIES
++
++InstallDebianDependencies()
++
+ ############################################################################PACK
+ 
+ include( CPackConfig )
+@@ -24,5 +28,5 @@ set( CPACK_DEBIAN_PACKAGE_DEPENDS
+ set( CPACK_RPM_PACKAGE_LICENSE "GPL-3.0" )
+ 
+ include( CPack )
+-CPackRegister()
++CPackRegister( "Dependencies-${PROJECT_NAME}" )
+ 
+diff --git a/pack/normies-dev/dependencies.debian b/pack/normies-dev/dependencies.debian
+new file mode 100644
+index 0000000..e0102b7
+--- /dev/null
++++ b/pack/normies-dev/dependencies.debian
+@@ -0,0 +1 @@
++cmatrix
+diff --git a/pack_3rdparty/hotspot/CMakeLists.txt b/pack_3rdparty/hotspot/CMakeLists.txt
+index 9181253..3b36254 100644
+--- a/pack_3rdparty/hotspot/CMakeLists.txt
++++ b/pack_3rdparty/hotspot/CMakeLists.txt
+@@ -5,9 +5,15 @@ project( Hotspot
+ 	DESCRIPTION "The Linux perf GUI for performance analysis."
+ 	)
+ 
++####################################################################DEPENDENCIES
++
++AddDebianRepository( "ppa:kubuntu-ppa/backports" )
++InstallDebianDependencies( "AddDebianRepository-${PROJECT_NAME}" )
++
+ ########################################################################DOWNLOAD
+ 
+ ExternalProject_Add( ${PROJECT_NAME}
++	DEPENDS "Dependencies-${PROJECT_NAME}"
+ 	URL "https://github.com/KDAB/hotspot/releases/download/v1.2.0/hotspot-v1.2.0.tar.gz"
+ 	URL_MD5 "cb9d01248c3f978998e595d66927faf0"
+ 	CONFIGURE_COMMAND ${CMAKE_COMMAND} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX= <SOURCE_DIR>
+diff --git a/pack_3rdparty/hotspot/dependencies.debian b/pack_3rdparty/hotspot/dependencies.debian
+new file mode 100644
+index 0000000..5caaec1
+--- /dev/null
++++ b/pack_3rdparty/hotspot/dependencies.debian
+@@ -0,0 +1,15 @@
++libkf5threadweaver-dev
++libkf5i18n-dev
++libkf5configwidgets-dev
++libkf5coreaddons-dev
++libkf5itemviews-dev
++libkf5itemmodels-dev
++libkf5kio-dev
++libkf5solid-dev
++libkf5windowsystem-dev
++libelf-dev
++libdw-dev
++cmake
++extra-cmake-modules
++gettext
++
+-- 
+2.17.1
+
