@@ -21,7 +21,7 @@ RUN apt update \
 		software-properties-common \
 		libelf-dev\
 	&& if [ "$DEV" = true ]; then \
-		apt install --yes vim telnet; \
+		apt install --yes vim; \
 	fi
 
 COPY . normies/
@@ -33,11 +33,7 @@ RUN mkdir normies/build \
 
 #RUN git clone https://github.com/conformism/normies \
 #	&& mkdir normies/build \
-#	&& cd normies \
-#	&& git apply *.patch \
-#	&& echo > pack/normies-dev/dependencies.debian \
-#	&& cd build \
-###	&& cd normies/build \
+#	&& cd normies/build \
 #	&& cmake -DINSTALL_BUILD_TIME_DEP=TRUE .. \
 #	&& make pack
 

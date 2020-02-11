@@ -7,7 +7,7 @@ project( Hotspot
 
 ####################################################################DEPENDENCIES
 
-AddDebianRepository( "ppa:kubuntu-ppa/backports" )
+AddDebianRepository()
 InstallDebianDependencies( "AddDebianRepository-${PROJECT_NAME}" )
 
 ########################################################################DOWNLOAD

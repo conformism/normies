@@ -4,31 +4,30 @@ This is the factory of packages provided to Conformism users. Some of them are m
 
 # Usage
 
-## Build dependencies
+## Build within a container
 
-- Debian / Ubuntu :
-
-```sh
-add-apt-repository ppa:kubuntu-ppa/backports
-apt-get update
-apt-get install libkf5threadweaver-dev libkf5i18n-dev libkf5configwidgets-dev \
-    libkf5coreaddons-dev libkf5itemviews-dev libkf5itemmodels-dev libkf5kio-dev \
-    libkf5solid-dev libkf5windowsystem-dev libelf-dev libdw-dev cmake \
-    extra-cmake-modules gettext
-```
-
-
-
-## Build
-
-Normies relies on CMake so packages construction is straight forward.
+Some packages have several build-time dependencies so not to pollute your system, you must use a container.
 
 ```sh
 normies $
 
+	docker build . -t normies:t1
+	docker run -it normies:t1
+	ls normies/build/out
+```
+
+## Classic build on Ubuntu 19.10 (deprecated)
+
+If you don't care, you can go the classic way. Normies relies on CMake so packages construction is straight forward.
+
+```sh
+normies $
+
+	sudo apt-get install build-essential git file libelf-dev \
+		cmake extra-cmake-modules software-properties-common 
+
 	mkdir build && cd build
-	cmake ..
-	make
+	cmake -DINSTALL_BUILD_TIME_DEP=TRUE ..
 	make pack
 ```
 

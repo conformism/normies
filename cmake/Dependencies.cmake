@@ -20,9 +20,10 @@ if( INSTALL_BUILD_TIME_DEP MATCHES TRUE )
 
 	macro( AddDebianRepository )
 		add_custom_target( "AddDebianRepository-${PROJECT_NAME}"
-			COMMAND sudo add-apt-repository -y "${ARGV}"
+			COMMAND grep '^[^\#]' "${CMAKE_CURRENT_SOURCE_DIR}/repositories.debian" | xargs -r -- sudo add-apt-repository -y
 			COMMAND sudo apt update
 			COMMENT "Add an APT repository for ${PROJECT_NAME} target"
+			DEPENDS ${ARGV}
 			)
 	endmacro()
 
@@ -39,6 +40,7 @@ else()
 	macro( AddDebianRepository )
 		add_custom_target( "AddDebianRepository-${PROJECT_NAME}" 
 #			COMMENT "Nothing to do"
+			DEPENDS ${ARGV}
 			)
 	endmacro()
 
