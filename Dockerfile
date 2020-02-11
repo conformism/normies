@@ -24,22 +24,22 @@ RUN apt update \
 		apt install --yes vim telnet; \
 	fi
 
-#COPY . normies/
+COPY . normies/
 
-#RUN mkdir normies/build \
-#	&& cd normies/build \
-#	&& cmake -DINSTALL_BUILD_TIME_DEP=TRUE .. \
-#	&& make pack	
-
-RUN git clone https://github.com/conformism/normies \
-	&& mkdir normies/build \
-	&& cd normies \	
-	&& git apply *.patch \
-	&& echo > pack/normies-dev/dependencies.debian \
-	&& cd build \
-##	&& cd normies/build \
+RUN mkdir normies/build \
+	&& cd normies/build \
 	&& cmake -DINSTALL_BUILD_TIME_DEP=TRUE .. \
 	&& make pack
+
+#RUN git clone https://github.com/conformism/normies \
+#	&& mkdir normies/build \
+#	&& cd normies \
+#	&& git apply *.patch \
+#	&& echo > pack/normies-dev/dependencies.debian \
+#	&& cd build \
+###	&& cd normies/build \
+#	&& cmake -DINSTALL_BUILD_TIME_DEP=TRUE .. \
+#	&& make pack
 
 CMD bash
 #CMD supervisord -c /etc/supervisord.conf
