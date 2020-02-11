@@ -50,11 +50,11 @@ set( CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON )
 set( CPACK_RPM_FILE_NAME RPM-DEFAULT )
 
 macro( CPackRegister )
-	add_custom_target( "package-${PROJECT_NAME}"
+	add_custom_target( "Package-${PROJECT_NAME}"
 		COMMAND ${CMAKE_CPACK_COMMAND} --config "${CMAKE_CURRENT_BINARY_DIR}/CPackConfig.cmake"
 		DEPENDS ${ARGV}
 		)
 
-	add_dependencies( pack "package-${PROJECT_NAME}" )
+	add_dependencies( pack "Package-${PROJECT_NAME}" )
 endmacro()
 

@@ -5,6 +5,10 @@ project( Normies-dev
 	DESCRIPTION "Normies developer starter-pack"
 	)
 
+####################################################################DEPENDENCIES
+
+InstallDebianDependencies()
+
 ############################################################################PACK
 
 include( CPackConfig )
@@ -24,5 +28,5 @@ set( CPACK_DEBIAN_PACKAGE_DEPENDS
 set( CPACK_RPM_PACKAGE_LICENSE "GPL-3.0" )
 
 include( CPack )
-CPackRegister()
+CPackRegister( "Dependencies-${PROJECT_NAME}" )
 

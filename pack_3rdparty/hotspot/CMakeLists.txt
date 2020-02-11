@@ -5,9 +5,15 @@ project( Hotspot
 	DESCRIPTION "The Linux perf GUI for performance analysis."
 	)
 
+####################################################################DEPENDENCIES
+
+AddDebianRepository( "ppa:kubuntu-ppa/backports" )
+InstallDebianDependencies( "AddDebianRepository-${PROJECT_NAME}" )
+
 ########################################################################DOWNLOAD
 
 ExternalProject_Add( ${PROJECT_NAME}
+	DEPENDS "Dependencies-${PROJECT_NAME}"
 	URL "https://github.com/KDAB/hotspot/releases/download/v1.2.0/hotspot-v1.2.0.tar.gz"
 	URL_MD5 "cb9d01248c3f978998e595d66927faf0"
 	CONFIGURE_COMMAND ${CMAKE_COMMAND} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX= <SOURCE_DIR>

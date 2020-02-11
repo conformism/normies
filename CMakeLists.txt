@@ -10,6 +10,7 @@ set( NORMIES_URL "https://github.com/conformism/normies" )
 set( NORMIES_MAINTAINER "Thomas Lepoix <thomas.lepoix@protonmail.ch>" )
 
 set( CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}"
+	"${CMAKE_SOURCE_DIR}/cmake"
 	"${CMAKE_SOURCE_DIR}"
 	)
 
@@ -21,6 +22,7 @@ else()
 endif()
 
 include( ExternalProject )
+include( Dependencies )
 
 set( EP_BASE_DIR "external" )
 set_directory_properties( PROPERTIES EP_BASE "${EP_BASE_DIR}" )
