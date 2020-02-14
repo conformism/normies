@@ -2,6 +2,8 @@
 
 This is the factory of packages provided to Conformism users. Some of them are meta-packages, some others are useful 3rd-party softwares not available at distributions repositories.
 
+
+
 # Usage
 
 ## Build within a container
@@ -28,6 +30,6 @@ normies $
 
 	mkdir build && cd build
 	cmake -DINSTALL_BUILD_TIME_DEP=TRUE ..
-	make pack
+	make deploy
 ```
 

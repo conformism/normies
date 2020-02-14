@@ -42,3 +42,17 @@ add_subdirectory( "${CMAKE_SOURCE_DIR}/pack_3rdparty/cutter" )
 add_subdirectory( "${CMAKE_SOURCE_DIR}/pack_3rdparty/hotspot" )
 add_subdirectory( "${CMAKE_SOURCE_DIR}/pack/normies-dev" )
 
+##########################################################################DEPLOY
+
+if( NOT DEPLOY_DIR )
+	set( DEPLOY_DIR "${CMAKE_BINARY_DIR}/out" )
+endif( NOT DEPLOY_DIR )
+message( STATUS "Deploy directory: ${DEPLOY_DIR}" ) 
+
+add_custom_target( deploy
+	DEPENDS pack
+	COMMAND ${CMAKE_COMMAND} -E make_directory "${DEPLOY_DIR}/deb"
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/*/*/*.deb" "${DEPLOY_DIR}/deb"
+	COMMAND dpkg-scanpackages "${DEPLOY_DIR}/deb" | gzip -9 > "${DEPLOY_DIR}/deb/Packages.gz"
+	)
+
