@@ -2,7 +2,7 @@
 
 This is the factory of packages provided to Conformism users. Some of them are meta-packages, some others are useful 3rd-party softwares not available at distributions repositories.
 
-
+Running Normies will build `.deb` packages (and/or `rpm` or whatever CPack can package that preferentially manages dependencies) and deploy an APT repository.
 
 # Usage
 
@@ -14,9 +14,11 @@ Some packages have several build-time dependencies so not to pollute your system
 normies $
 
 	docker build . -t normies:t1
-	docker run -it normies:t1
-	ls normies/build/out
+	docker run -v $PWD/out:/opt/normies/build/out -it normies:t1
+	ls out
 ```
+
+Of course, you can use another directory than `$PWD/out` to deploy your packages repository.
 
 ## Classic build on Ubuntu 19.10 (deprecated)
 

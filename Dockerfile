@@ -1,12 +1,10 @@
 FROM ubuntu:eoan
-#docker build . -t "normies:t1"
-#docker run -it "normies:t1" bash
+#docker build . -t normies:t1
+#docker run -v $PWD/out:/opt/normies/build/out -t normies:t1
 
 ARG DEV
 
-WORKDIR /usr/local/src/
-
-#EXPOSE 25
+WORKDIR /opt
 
 ENV DEV=${DEV}
 
@@ -26,9 +24,11 @@ RUN apt update \
 
 COPY . normies/
 
-RUN mkdir normies/build \
-	&& cd normies/build \
-	&& cmake -DINSTALL_BUILD_TIME_DEP=TRUE .. \
+RUN mkdir normies/build
+
+WORKDIR /opt/normies/build
+
+CMD cmake -DINSTALL_BUILD_TIME_DEP=TRUE .. \
 	&& make deploy
 
 #RUN git clone https://github.com/conformism/normies \
@@ -37,6 +37,6 @@ RUN mkdir normies/build \
 #	&& cmake -DINSTALL_BUILD_TIME_DEP=TRUE .. \
 #	&& make deploy
 
-CMD bash
+#CMD bash
 #CMD supervisord -c /etc/supervisord.conf
 
