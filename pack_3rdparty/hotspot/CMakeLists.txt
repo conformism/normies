@@ -7,8 +7,8 @@ project( Hotspot
 
 ####################################################################DEPENDENCIES
 
-AddDebianRepository()
-InstallDebianDependencies( "AddDebianRepository-${PROJECT_NAME}" )
+AddDebianRepositories()
+InstallDebianDependencies( "AddDebianRepositories-${PROJECT_NAME}" )
 
 ########################################################################DOWNLOAD
 
