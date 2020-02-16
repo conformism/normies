@@ -18,6 +18,7 @@ RUN apt update \
 		extra-cmake-modules \
 		software-properties-common \
 		libelf-dev\
+		lintian \
 	&& if [ "$DEV" = true ]; then \
 		apt install --yes vim; \
 	fi

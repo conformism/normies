@@ -14,12 +14,30 @@ set( CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}"
 	"${CMAKE_SOURCE_DIR}"
 	)
 
+############################################################################FIND
+
 find_program( STRIP strip )
 if( STRIP )
 	message( STATUS "Found strip: ${STRIP}" )
 else()
 	message( ERROR "Not found strip: Please install binutils" )
 endif()
+
+find_program( LINTIAN lintian )
+if( LINTIAN )
+	message( STATUS "Found lintian: ${LINTIAN}" )
+else()
+	message( ERROR "Not found lintian: Please install lintian" )
+endif()
+
+find_program( DPKG_SCANPACKAGES dpkg-scanpackages )
+if( DPKG_SCANPACKAGES )
+	message( STATUS "Found strip: ${DPKG_SCANPACKAGES}" )
+else()
+	message( ERROR "Not found dpkg-scanpackages: Please install dpkg-dev" )
+endif()
+
+################################################################################
 
 include( ExternalProject )
 include( Dependencies )
@@ -53,6 +71,8 @@ add_custom_target( deploy
 	DEPENDS pack
 	COMMAND ${CMAKE_COMMAND} -E make_directory "${DEPLOY_DIR}/deb"
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/*/*/*.deb" "${DEPLOY_DIR}/deb"
-	COMMAND dpkg-scanpackages "${DEPLOY_DIR}/deb" | gzip -9 > "${DEPLOY_DIR}/deb/Packages.gz"
+	COMMAND ${DPKG_SCANPACKAGES} "${DEPLOY_DIR}/deb" | gzip -9 > "${DEPLOY_DIR}/deb/Packages.gz"
+	COMMAND eval "${LINTIAN} \"${DEPLOY_DIR}/deb/*.deb\" ;:;"
+	# Do not care about lintian exit status so here is this syntax with eval and ;:;
 	)
 

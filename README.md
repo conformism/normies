@@ -14,7 +14,7 @@ Some packages have several build-time dependencies so not to pollute your system
 normies $
 
 	docker build . -t normies:t1
-	docker run -v $PWD/out:/opt/normies/build/out -it normies:t1
+	docker run -v $PWD/out:/opt/normies/build/out -t normies:t1
 	ls out
 ```
 
@@ -28,7 +28,7 @@ If you don't care, you can go the classic way. Normies relies on CMake so packag
 normies $
 
 	sudo apt-get install build-essential git file libelf-dev \
-		cmake extra-cmake-modules software-properties-common 
+		cmake extra-cmake-modules software-properties-common lintian
 
 	mkdir build && cd build
 	cmake -DINSTALL_BUILD_TIME_DEP=TRUE ..
