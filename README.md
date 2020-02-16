@@ -80,7 +80,8 @@ If it is your own package that has no place elsewhere, the recipe folder is its 
 
 - Do not forget to strip binary files if they are not. Just add a `strip` step after the `install` one.
 
-- Then install project from the `ExternalProject` `<INSTALL_DIR>` to the real installation directory, `/usr`. If the project has a standard installation process, you will only have to install that directory to `.` that means the root after `${DESTDIR}/${CMAKE_INSTALL_PREFIX}`. Do not mess with permissions.
+- Then install project from the `ExternalProject` `<INSTALL_DIR>` to the real installation directory, `/usr`. If the project has a standard installation process, you will only have to install that directory to `.` that means the root after `${DESTDIR}/${CMAKE_INSTALL_PREFIX}`. Do not mess with permissions. Check CMake documentation :
+	- https://cmake.org/cmake/help/latest/command/install.html
 ```c++
 install(
 	DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${EP_BASE_DIR}/Install/${PROJECT_NAME}/."
@@ -89,8 +90,6 @@ install(
 	DIRECTORY_PERMISSIONS ${CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS}
 	)
 ```
-Check CMake documentation :
-	- https://cmake.org/cmake/help/latest/command/install.html
 
 ## Dependencies paragraph
 
